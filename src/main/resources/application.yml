@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: monolith
+    namespace: live
+  datasource:
+    url:
+    username: root
+    password: ${DB_PASSWORD:root}
+    hikari:
+      connection-test-query: "SELECT NOW()"
+      maximum-pool-size: 20
+      minimum-idle: 8
+      connection-timeout: 10000
+  data:
+    redis:
+      url:
+      timeout: PT2S # 2 seconds
+  threads:
+    virtual:
+      enabled: true
+  lifecycle:
+    timeout-per-shutdown-phase: 5s
