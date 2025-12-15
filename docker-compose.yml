@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  fmevently-mariadb:
+    image: mariadb:latest
+    container_name: fmevently-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+      MARIADB_DATABASE: famevently
+
+    volumes:
+      - famevently-db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+volumes:
+  famevently-db-data:
