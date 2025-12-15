@@ -14,7 +14,7 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Optional<Customer> getCustomer(String email){
-        return customerRepository.getCustomer(email);
+    public Optional<UserCoreInfo> getCustomer(final long userId){
+        return customerRepository.getUserById(userId);
     }
 }
