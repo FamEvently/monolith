@@ -1,6 +1,5 @@
 package com.famevently.monolith.customer;
 
-import org.apache.catalina.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,20 +16,20 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-public class CustomerRepository extends NamedParameterJdbcDaoSupport
+public class UserRepository extends NamedParameterJdbcDaoSupport
 {
     private static final DataClassRowMapper<UserCoreInfo> ROW_MAPPER = new DataClassRowMapper<>(
             UserCoreInfo.class);
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public CustomerRepository(final DataSource datasource) {
+    public UserRepository(final DataSource datasource) {
        setDataSource(datasource);
        this.namedParameterJdbcTemplate = getNamedParameterJdbcTemplate();
     }
 
-    public long save(CustomerCreationRequest request) {
-        String sql = "INSERT INTO user (email, first_name, last_name, language, gender, birthday, country, is_whitelisted, created_at)" +
-                " VALUES (:email, :first_name, :last_name, :language, gender, :birthday, :is_whitelisted, :created_at)";
+    public Optional<UserCoreInfo> save(CustomerCreationRequest request) {
+        String sql = "INSERT INTO users (email, first_name, last_name, language, gender, birthday, country, is_whitelisted, created_at)" +
+                " VALUES (:email, :first_name, :last_name, :language, gender, :birthday, :country, :is_whitelisted, :created_at)";
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("email", request.email());
@@ -45,12 +44,13 @@ public class CustomerRepository extends NamedParameterJdbcDaoSupport
 
         final KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(sql, params, keyHolder);
+        final long userId = Objects.requireNonNull(keyHolder.getKey()).longValue();
 
-        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+        return getUserById(userId);
     }
 
     public Optional<UserCoreInfo> getUserById(final long userId) {
-        String sql = "SELECT * FROM user WHERE user_id = :user_id";
+        String sql = "SELECT * FROM users WHERE user_id = :user_id";
 
         final Map<String, Object> args = Map.of("user_id", userId);
 
@@ -63,7 +63,7 @@ public class CustomerRepository extends NamedParameterJdbcDaoSupport
         }
     }
     public Optional<UserCoreInfo> getUserByEmail(final String email) {
-        String sql = "SELECT * FROM user WHERE email = :email";
+        String sql = "SELECT * FROM users WHERE email = :email";
 
         final Map<String, Object> args = Map.of("email", email);
 

@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:mariadb://localhost:3306/famevently
     username: root
-    password: Azsumtup123!
+    password: root
     hikari:
       connection-test-query: "SELECT NOW()"
       maximum-pool-size: 20

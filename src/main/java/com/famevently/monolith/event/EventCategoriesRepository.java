@@ -16,7 +16,7 @@ public class EventCategoriesRepository extends NamedParameterJdbcDaoSupport {
 
     public Long getByName(final String name)
     {
-        final String sql = "SELECT id FROM n_event_categories WHERE name = :name";
+        final String sql = "SELECT event_category_id FROM n_event_categories WHERE category_name = :name";
         final var params = Map.of("name", name);
 
         return getNamedParameterJdbcTemplate().queryForObject(sql, params, Long.class);

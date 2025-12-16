@@ -4,13 +4,8 @@ import com.famevently.monolith.customer.CustomerCreationRequest;
 import com.famevently.monolith.customer.CustomerService;
 import com.famevently.monolith.customer.UserCoreInfo;
 import com.famevently.monolith.password.AuthenticatedPassword;
-import com.famevently.monolith.password.UserPassword;
 import com.famevently.monolith.password.UserPasswordService;
-import org.apache.catalina.User;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -20,7 +15,7 @@ public class LoginService {
     private final UserPasswordService userPasswordService;
 
 
-    public LoginService(final CustomerService customerService, final PasswordEncoder encoder, final UserPasswordService userPasswordService) {
+    public LoginService(final CustomerService customerService, final UserPasswordService userPasswordService) {
         this.customerService = customerService;
         this.userPasswordService = userPasswordService;
     }
