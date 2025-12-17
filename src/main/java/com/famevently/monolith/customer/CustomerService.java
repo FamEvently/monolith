@@ -17,4 +17,8 @@ public class CustomerService {
     public Optional<UserCoreInfo> getCustomer(final long userId){
         return userRepository.getUserById(userId);
     }
+
+    public Optional<UserCoreInfo> getCustomerByEmail(final String email){
+        return userRepository.getUserByEmail(email);
+    }
 }
