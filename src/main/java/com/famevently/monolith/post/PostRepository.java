@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,5 +57,17 @@ public class PostRepository extends NamedParameterJdbcDaoSupport {
             return Optional.empty();
         }
 
+    }
+
+    public List<Post> getPostsByUser(final long userId) {
+        final String sql = """
+                SELECT p.post_id, m.user_id, m.event_id, m.description, m.image_count, m.created_at, m.updated_at FROM message m
+                JOIN post p ON m.message_id = p.message_id
+                WHERE m.user_id = :user_id
+                """;
+
+        final Map<String, Object> params = Map.of("user_id", userId);
+
+        return getNamedParameterJdbcTemplate().query(sql, params, ROW_MAPPER);
     }
 }

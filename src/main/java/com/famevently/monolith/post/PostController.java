@@ -1,9 +1,8 @@
 package com.famevently.monolith.post;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/posts")
@@ -17,5 +16,15 @@ public class PostController {
     @PostMapping
     public Post createPost(@RequestBody final CreatePostRequest request) {
         return postService.createPost(request);
+    }
+
+    @GetMapping("/{postId}")
+    public Post getPostById(@PathVariable final String postId) {
+        return postService.getPostById(postId);
+    }
+
+    @GetMapping("/users/{userId}")
+    public List<Post> getPostsForUser(@PathVariable final long userId) {
+        return postService.getPostsForUser(userId);
     }
 }
