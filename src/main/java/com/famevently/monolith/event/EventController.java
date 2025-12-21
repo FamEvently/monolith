@@ -1,53 +1,51 @@
 package com.famevently.monolith.event;
 
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/event")
+@RequestMapping("/v1/events")
 public class EventController {
     private final EventService eventService;
 
-    public EventController(EventService eventService) {
+    public EventController(final EventService eventService) {
         this.eventService = eventService;
     }
 
-    // CREATE
-    @PostMapping
-    public ResponseEntity<?> createEvent(@Valid @RequestBody CreateEventRequest request) {
-        eventService.createEvent(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @PostMapping()
+    public Event createEvent(@RequestBody final CreateEventRequest request)
+    {
+        return eventService.createEvent(request);
     }
 
-    // GET by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Event> getEvent(@PathVariable Long id) {
-        return ResponseEntity.ok(eventService.getEvent(id));
+    @GetMapping("/users/{userId}")
+    public List<Event> getEventsForOrganizer(@PathVariable final Long userId)
+    {
+        return eventService.getEventsForOrganizer(userId);
     }
 
-    // GET user events
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Event>> getUserEvents(@PathVariable Long userId) {
-        return ResponseEntity.ok(eventService.getUserEvents(userId));
+    @GetMapping("/by-category")
+    public List<Event> getEventsByCategory(@RequestParam final String categoryName)
+    {
+        return eventService.getEventsByCategory(categoryName);
     }
 
-    // UPDATE
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateEvent(@PathVariable Long id,
-                                            @Valid @RequestBody CreateEventRequest request,
-                                            Long userId) {
-        eventService.updateEvent(id, request, userId);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/by-location")
+    public List<Event> getEventsForLocation(@RequestParam final String location)
+    {
+        return eventService.getEventsForLocation(location);
     }
 
-    // DELETE
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long id, Long userId) {
-        eventService.deleteEvent(id, userId);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{eventId}/users/{userId}")
+    public void createEvent(@PathVariable final Long eventId, @PathVariable final Long userId)
+    {
+        eventService.deleteEvent(eventId, userId);
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public void createEvent(@PathVariable final Long userId)
+    {
+        eventService.deleteEventsForOrganizer(userId);
     }
 }
