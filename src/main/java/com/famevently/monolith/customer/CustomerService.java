@@ -8,13 +8,17 @@ import java.util.Optional;
 @Service
 public class CustomerService {
 
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
 
-    public CustomerService(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public CustomerService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public Optional<Customer> getCustomer(String email){
-        return customerRepository.getCustomer(email);
+    public Optional<UserCoreInfo> getCustomer(final long userId){
+        return userRepository.getUserById(userId);
+    }
+
+    public Optional<UserCoreInfo> getCustomerByEmail(final String email){
+        return userRepository.getUserByEmail(email);
     }
 }

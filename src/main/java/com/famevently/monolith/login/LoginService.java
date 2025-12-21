@@ -1,33 +1,48 @@
 package com.famevently.monolith.login;
 
-import com.famevently.monolith.customer.Customer;
 import com.famevently.monolith.customer.CustomerService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.famevently.monolith.customer.UserCoreInfo;
+import com.famevently.monolith.password.AuthenticatedPassword;
+import com.famevently.monolith.password.UserPasswordService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
 @Service
 public class LoginService {
     private final CustomerService customerService;
-    private final PasswordEncoder encoder;
+    private final UserPasswordService userPasswordService;
+    private final GoogleTokenVerifier googleTokenVerifier;
 
-
-    public LoginService(CustomerService customerService, PasswordEncoder encoder) {
+    public LoginService(final CustomerService customerService,
+                        final UserPasswordService userPasswordService,
+                        final GoogleTokenVerifier googleTokenVerifier) {
         this.customerService = customerService;
-        this.encoder = encoder;
+        this.userPasswordService = userPasswordService;
+        this.googleTokenVerifier = googleTokenVerifier;
     }
 
-    public Customer login (LoginRequest request){
-        Customer customer = customerService.getCustomer(request.getEmail())
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Invalid email or password"));
+    public UserCoreInfo login(final LoginRequest request) {
+        final AuthenticatedPassword userPassword = userPasswordService.validatePassword(request.email(), request.password());
 
-        if (!encoder.matches(request.getPassword(), customer.getPwdHash())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Invalid email or password");}
+        final Optional<UserCoreInfo> userInfo = customerService.getCustomer(userPassword.userId());
 
-        return customer;
+        if (userInfo.isEmpty()) {
+            throw new IllegalStateException("User not found");
+        }
+
+        return userInfo.get();
+    }
+
+    public UserCoreInfo googleLogin(final GoogleLoginRequest request) {
+        final String email = googleTokenVerifier.verifyAndGetEmail(request.token());
+        final Optional<UserCoreInfo> userInfo = customerService.getCustomerByEmail(email);
+
+        if (userInfo.isPresent()) {
+            return userInfo.get();
+        }
+
+        //register new user
+        return null;
     }
 }

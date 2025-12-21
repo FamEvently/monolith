@@ -1,14 +1,7 @@
 package com.famevently.monolith.login;
 
-public class LoginRequest {
-    private String email;
-    private String password;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
+public record LoginRequest(
+        String email,
+        String password)
+{
 }

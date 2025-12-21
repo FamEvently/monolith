@@ -1,8 +1,6 @@
 package com.famevently.monolith.event;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,50 +13,39 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-    public void createEvent(CreateEventRequest request) {
-        Event event = EventMapper.toEntity(request);
-        eventRepository.save(event);
-    }
-
-    public Event getEvent(Long eventId){
-        Event event = eventRepository.getEvent(eventId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Event not found"
-                ));
-
-        return event;
-    }
-    public List<Event> getUserEvents(Long userId){
-        return eventRepository.getUserEvents(userId);
-    }
-
-    public void updateEvent(Long eventId, CreateEventRequest request,Long userId){
-        Event event = eventRepository.getEvent(eventId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Event not found"
-                ));
-        if (!event.getUserId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    final Event createEvent(final CreateEventRequest request)
+    {
+        final Optional<Event> savedEvent =  eventRepository.save(request);
+        if (savedEvent.isEmpty()) {
+            throw new IllegalStateException("Event not saved");
         }
-
-        event = EventMapper.toEntity(request);
-
-        eventRepository.update(event);
+        return savedEvent.get();
     }
 
-    public void deleteEvent(Long eventId, Long userId) {
-
-        Event existingEvent = eventRepository.getEvent(eventId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Event not found"
-                ));
-        if (!existingEvent.getUserId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-
-        eventRepository.delete(eventId);
+    final List<Event> getEventsByCategory(final String categoryName)
+    {
+        return eventRepository.getEventsByCategory(categoryName);
     }
+
+    final List<Event> getEventsForOrganizer(final Long userId)
+    {
+        return eventRepository.getEventsForUser(userId);
+    }
+
+    final List<Event> getEventsForLocation(final String location)
+    {
+        return eventRepository.getEventsForLocation(location);
+    }
+
+    final void deleteEvent(final Long eventId, final Long userId)
+    {
+        eventRepository.deleteEvent(eventId, userId);
+    }
+
+    final void deleteEventsForOrganizer(final Long userId)
+    {
+        //if organizer is restricted/banned
+        eventRepository.deleteEventsForUser(userId);
+    }
+
 }
