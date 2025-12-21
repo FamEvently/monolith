@@ -3,6 +3,11 @@ spring:
     name: monolith
     namespace: live
 
+google:
+  oauth2:
+    client-id: 463363879926-8gdlvjqa7a9t13ct8olq646766l7959p.apps.googleusercontent.com
+    secret: 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
+
   datasource:
     url: jdbc:mariadb://localhost:3306/famevently
     username: root
