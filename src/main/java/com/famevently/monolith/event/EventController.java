@@ -25,13 +25,13 @@ public class EventController {
         return eventService.getEventsForOrganizer(userId);
     }
 
-    @GetMapping()
+    @GetMapping("/by-category")
     public List<Event> getEventsByCategory(@RequestParam final String categoryName)
     {
         return eventService.getEventsByCategory(categoryName);
     }
 
-    @GetMapping()
+    @GetMapping("/by-location")
     public List<Event> getEventsForLocation(@RequestParam final String location)
     {
         return eventService.getEventsForLocation(location);

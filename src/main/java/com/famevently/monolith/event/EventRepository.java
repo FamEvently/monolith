@@ -48,7 +48,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
                 .addValue("created_at", OffsetDateTime.now());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        getNamedParameterJdbcTemplate().update(sql, params);
+        getNamedParameterJdbcTemplate().update(sql, params, keyHolder);
         return getEventById(keyHolder.getKey().longValue());
     }
 
@@ -59,7 +59,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
             e.event_id, 
             e.user_id, 
             e.overview, 
-            ec.name AS event_category, 
+            ec.category_name AS event_category, 
             e.date, 
             e.address, 
             e.location,
@@ -89,7 +89,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
             e.event_id, 
             e.user_id, 
             e.overview, 
-            ec.name AS event_category, 
+            ec.category_name AS event_category, 
             e.date, 
             e.address, 
             e.location,
@@ -99,7 +99,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
             e.adults_only, 
             e.created_at 
         FROM event e
-        JOIN n_event_categories ec ON e.event_category_id = ec.id
+        JOIN n_event_categories ec ON e.event_category_id = ec.event_category_id
         WHERE ec.name = :category_name
         """;
         final Map<String, Object> params = Map.of("category_name", categoryName);
@@ -114,7 +114,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
             e.event_id, 
             e.user_id, 
             e.overview, 
-            ec.name AS event_category, 
+            ec.category_name AS event_category, 
             e.date, 
             e.address, 
             e.location,
@@ -124,7 +124,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
             e.adults_only, 
             e.created_at 
         FROM event e
-        JOIN n_event_categories ec ON e.event_category_id = ec.id
+        JOIN n_event_categories ec ON e.event_category_id = ec.event_category_id
         WHERE user_id = :user_id
         """;
         final Map<String, Object> params = Map.of("user_id", userId);
@@ -139,7 +139,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
             e.event_id, 
             e.user_id, 
             e.overview, 
-            ec.name AS event_category, 
+            ec.category_name AS event_category, 
             e.date, 
             e.address, 
             e.location,
@@ -149,7 +149,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
             e.adults_only, 
             e.created_at 
         FROM event e
-        JOIN n_event_categories ec ON e.event_category_id = ec.id
+        JOIN n_event_categories ec ON e.event_category_id = ec.event_category_id
         WHERE e.location = :location
         """;
         final Map<String, Object> params = Map.of("location", location);

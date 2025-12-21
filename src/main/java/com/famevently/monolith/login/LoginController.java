@@ -19,4 +19,9 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(service.login(request));
     }
+
+    @PostMapping("/google")
+    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest request) {
+        return ResponseEntity.ok(service.googleLogin(request));
+    }
 }

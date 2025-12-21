@@ -11,6 +11,7 @@ public record UserCoreInfo(
         String language,
         String gender,
         LocalDate birthday,
+        String country,
         boolean isWhitelisted,
         OffsetDateTime createdAt
 ) {
