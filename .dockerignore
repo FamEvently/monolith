@@ -7,9 +7,6 @@
 *.iml
 .vscode
 
-# Keep target/ for pre-built JAR
-# target/
-
 # Docker
 Dockerfile
 docker-compose.yml
