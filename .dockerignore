@@ -7,9 +7,6 @@
 *.iml
 .vscode
 
-# Build output
-target/
-
 # Docker
 Dockerfile
 docker-compose.yml
