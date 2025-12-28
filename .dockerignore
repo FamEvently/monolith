@@ -7,8 +7,8 @@
 *.iml
 .vscode
 
-# Build output
-target/
+# Keep target/ for pre-built JAR
+# target/
 
 # Docker
 Dockerfile
