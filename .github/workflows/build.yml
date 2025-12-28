@@ -7,7 +7,7 @@ on:
       - staging
       - master
 env:
-  IMAGE_NAME: fam-evently/monolith
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/monolith
 
 jobs:
   build-and-push:
