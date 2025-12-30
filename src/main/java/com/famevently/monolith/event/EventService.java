@@ -55,19 +55,15 @@ public class EventService {
 
     final void markUserAttendance(final UserAttendanceRequest request, final Long userId)
     {
-        // Get previous attendance state to calculate delta
         final var previousAttendance = userAttendanceRepository.getAttendance(userId, request.eventId());
         final boolean wasGoing = previousAttendance.map(UserAttendance::isGoing).orElse(false);
         final boolean hasResponded = previousAttendance.isPresent();
 
-        // Upsert user attendance
         userAttendanceRepository.upsertAttendance(userId, request.eventId(), request.isGoing());
 
-        // Calculate changes
         final AttendanceChange attendeesChange = hasResponded ? AttendanceChange.NONE : AttendanceChange.INCREMENT;
         final AttendanceChange goingChange = calculateGoingChange(wasGoing, request.isGoing());
 
-        // Atomically adjust stats (creates record if doesn't exist)
         if (attendeesChange != AttendanceChange.NONE || goingChange != AttendanceChange.NONE) {
             eventAttendanceStatsRepository.adjustAttendanceCounts(request.eventId(), attendeesChange, goingChange);
         }
@@ -83,11 +79,6 @@ public class EventService {
     final Optional<EventAttendanceStats> getEventAttendanceStats(final Long eventId)
     {
         return eventAttendanceStatsRepository.getEventStats(eventId);
-    }
-
-    final List<UserAttendance> getEventAttendance(final Long eventId)
-    {
-        return userAttendanceRepository.getEventAttendance(eventId);
     }
 
     final List<UserAttendance> getUserAttendance(final Long userId)

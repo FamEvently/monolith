@@ -65,18 +65,6 @@ public class UserAttendanceRepository extends NamedParameterJdbcDaoSupport {
         return getNamedParameterJdbcTemplate().query(sql, params, ROW_MAPPER);
     }
 
-    public List<UserAttendance> getEventAttendance(final long eventId) {
-        final String sql = """
-                SELECT user_id, event_id, is_going, created_at, updated_at
-                FROM user_attendance
-                WHERE event_id = :event_id
-                """;
-
-        final Map<String, Object> params = Map.of("event_id", eventId);
-
-        return getNamedParameterJdbcTemplate().query(sql, params, ROW_MAPPER);
-    }
-
     public Optional<UserAttendance> getAttendance(final long userId, final long eventId) {
         final String sql = """
                 SELECT user_id, event_id, is_going, created_at, updated_at
