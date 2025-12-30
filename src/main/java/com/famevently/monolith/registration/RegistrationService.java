@@ -4,6 +4,10 @@ import com.famevently.monolith.customer.CustomerCreationRequest;
 import com.famevently.monolith.customer.CustomerService;
 import com.famevently.monolith.customer.UserCoreInfo;
 import com.famevently.monolith.customer.UserRepository;
+import com.famevently.monolith.login.AuthenticationMethod;
+import com.famevently.monolith.login.CreateAuthenticatedUserRequest;
+import com.famevently.monolith.login.GeneralLoginResponse;
+import com.famevently.monolith.login.LoginService;
 import com.famevently.monolith.password.UserPasswordService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,14 +19,19 @@ public class RegistrationService {
      private final UserRepository userRepository;
     private final UserPasswordService userPasswordService;
     private final CustomerService customerService;
+    private final LoginService loginService;
 
-    public RegistrationService(final UserRepository userRepository, final UserPasswordService userPasswordService, CustomerService customerService) {
+    public RegistrationService(final UserRepository userRepository,
+                               final UserPasswordService userPasswordService,
+                               final CustomerService customerService,
+                               final LoginService loginService) {
         this.userRepository = userRepository;
         this.userPasswordService = userPasswordService;
         this.customerService = customerService;
+        this.loginService = loginService;
     }
 
-    public CustomerCreationRequest register(final RegistrationRequest request){
+    public GeneralLoginResponse registerUser(final RegistrationRequest request, final String deviceUuid){
 
         if (customerService.getCustomerByEmail(request.email()).isPresent()){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already used");
@@ -32,6 +41,15 @@ public class RegistrationService {
         final UserCoreInfo user = userRepository.save(customer).orElseThrow(IllegalStateException::new);
         userPasswordService.savePassword(request.password(), user.userId(), request.email());
 
-        return customer;
+        final CreateAuthenticatedUserRequest authenticatedUserRequest = CreateAuthenticatedUserRequest.withoutSession(
+                user.userId(),
+                deviceUuid,
+                user.email(),
+                user.language(),
+                user.createdAt(),
+                true,
+                AuthenticationMethod.CREDENTIALS
+        );
+        return loginService.createAuthenticatedUser(authenticatedUserRequest);
     }
 }

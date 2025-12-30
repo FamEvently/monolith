@@ -40,6 +40,8 @@ services:
     read-timeout-in-millis: 3000
     connection-timeout-in-millis: 1000
 
+suffix: ""
+
 google:
   oauth2:
     client-id: 463363879926-8gdlvjqa7a9t13ct8olq646766l7959p.apps.googleusercontent.com
