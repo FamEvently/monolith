@@ -45,4 +45,35 @@ public class LoginService {
         //register new user
         return null;
     }
+
+    public GeneralLoginResponse createAuthenticatedUser(final CreateAuthenticatedUserRequest request)
+    {
+        final String sessionId = getSessionId(request);
+
+        final GeneralLoginResponse.Builder responseBuilder = new GeneralLoginResponse.Builder(
+                request.userId(),
+                request.email(),
+                request.language(),
+                request.createdAt(),
+                sessionId,
+                request.authenticationMethod()
+        );
+
+        if (request.rememberMe())
+        {
+            //persist login token
+            //responseBuilder.loginToken(loginToken);
+        }
+
+        return responseBuilder.build();
+    }
+
+    private String getSessionId(final CreateAuthenticatedUserRequest request) {
+        if (isNull(request.sessionId())) {
+            final UserSession session = userSessionRestClient.createSession(request.userId(), false);
+            return session.sessionId();
+        }
+        return request.sessionId();
+    }
+
 }
