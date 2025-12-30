@@ -1,9 +1,8 @@
 package com.famevently.monolith.post;
 
-public record CreatePostRequest(
+public record CreateRepostRequest(
+        long userId,
         Long eventId,
         String description,
-        int imageCount,
-        String parentPostId
-) {
+        String parentPostId) {
 }

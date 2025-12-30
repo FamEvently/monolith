@@ -2,8 +2,6 @@ package com.famevently.monolith.message;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -43,12 +41,11 @@ public class MessageRepository extends NamedParameterJdbcDaoSupport {
 
         return request.messageId();
     }
+
+    public void deleteById(final String messageId) {
+        final String sql = "DELETE FROM message WHERE message_id = :message_id";
+        final var params = new MapSqlParameterSource().addValue("message_id", messageId);
+
+        getNamedParameterJdbcTemplate().update(sql, params);
+    }
 }
-
-
-//UUID message_id PK
-//        TIMESTAMPTZ timestamp
-//        BIGINT user_id FK "FK -> user(user_id), NOT NULL, ON DELETE CASCADE"
-//        BIGINT event_id FK "FK (event_id, user_id) -> event(event_id, user_id), NULL"
-//        TEXT description
-//        INTEGER image_count

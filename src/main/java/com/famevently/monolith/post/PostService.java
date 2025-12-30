@@ -1,8 +1,10 @@
 package com.famevently.monolith.post;
 
+import com.famevently.monolith.event.EventRepository;
 import com.famevently.monolith.message.CreateMessageRequest;
 import com.famevently.monolith.message.MessageService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,32 +12,85 @@ import java.util.UUID;
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final EventRepository eventRepository;
     private final MessageService messageService;
 
-    public PostService(final PostRepository postRepository, final MessageService messageService) {
+    public PostService(final PostRepository postRepository,
+                       final EventRepository eventRepository,
+                       final MessageService messageService) {
         this.postRepository = postRepository;
+        this.eventRepository = eventRepository;
         this.messageService = messageService;
     }
 
-    public Post createPost(final CreatePostRequest postRequest) {
-        //perform any necessary validations or business logic here
+    @Transactional
+    public Post createEventPost(final CreatePostRequest request, final long userId) {
+        final boolean isOrganizer = eventRepository.getEventByForOrganizer(request.eventId(), userId).isPresent();
+        final PostContext context = PostContext.eventPost(userId, request.eventId(), request.description(), request.imageCount(), isOrganizer);
+
+        return createPost(context);
+    }
+
+    @Transactional
+    public Post createBlogPost(final CreateBlogPostRequest request, final long userId) {
+        final PostContext context = PostContext.blogPost(userId, request.description(), request.imageCount());
+
+        return createPost(context);
+    }
+
+    @Transactional
+    public Post createRepost(final CreateRepostRequest request, final long userId) {
+        final boolean isOrganizer = eventRepository.getEventByForOrganizer(request.eventId(), userId).isPresent();
+        final PostContext context = PostContext.repost(userId, request.eventId(), request.description(), isOrganizer, request.parentPostId());
+
+        return createPost(context);
+    }
+
+    private Post createPost(final PostContext context) {
         final String messageId = UUID.randomUUID().toString();
         final CreateMessageRequest messageRequest = new CreateMessageRequest(
                 messageId,
-                postRequest.userId(),
-                postRequest.eventId(),
-                postRequest.description(),
-                postRequest.imageCount()
+                context.userId(),
+                context.eventId(),
+                context.description(),
+                context.imageCount()
         );
         messageService.createMessage(messageRequest);
-        return postRepository.create(UUID.randomUUID().toString(), messageId).orElseThrow(IllegalStateException::new);
+
+        return postRepository.insert(context, messageId)
+                .orElseThrow(() -> new IllegalStateException("Failed to create post"));
     }
 
     public Post getPostById(final String postId) {
-        return postRepository.getPostById(postId).orElseThrow(IllegalStateException::new);
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalStateException("Post not found"));
     }
 
-    public List<Post> getPostsForUser(final long userId) {
-        return postRepository.getPostsByUser(userId);
+    public List<Post> getPostsByUser(final long userId) {
+        return postRepository.findByUserId(userId);
+    }
+
+    public List<Post> getEventPosts(final long eventId) {
+        return postRepository.findByEventId(eventId);
+    }
+
+    public List<Post> getBlogPosts() {
+        return postRepository.findBlogPosts();
+    }
+
+    public List<Post> getReplies(final String parentPostId) {
+        return postRepository.findByParentPostId(parentPostId);
+    }
+
+    @Transactional
+    public void deletePost(final String postId) {
+        // Get the post to find its messageId
+        final Post post = getPostById(postId);
+
+        // Delete post first (due to FK constraints)
+        postRepository.deleteByMessageId(post.messageId());
+
+        // Delete the message (content)
+        messageService.deleteMessageById(post.messageId());
     }
 }

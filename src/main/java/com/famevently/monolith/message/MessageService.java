@@ -13,4 +13,8 @@ public class MessageService {
     public String createMessage(final CreateMessageRequest request) {
         return messageRepository.upsert(request);
     }
+
+    public void deleteMessageById(final String messageId) {
+        messageRepository.deleteById(messageId);
+    }
 }
