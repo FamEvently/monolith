@@ -57,7 +57,7 @@ public class LoginService {
             throw new IllegalArgumentException("Session ID cannot be null");
         }
 
-        final Optional<UserSession> session = userSessionRestClient.validateSession(sessionId);
+        final Optional<UserSession> session = userSessionRestClient.validateSession(sessionId, deviceUuid);
 
         if (session.isEmpty()) {
             throw new IllegalStateException("Session not found");
