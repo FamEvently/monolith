@@ -69,6 +69,15 @@ public class UserSessionRestClient {
         }
     }
 
+    public void deleteSession(final String deviceUuid)
+    {
+        final String uri = UriComponentsBuilder.fromHttpUrl(deleteSessionByDeviceUuidEndpoint)
+                .buildAndExpand(deviceUuid)
+                .toUriString();
+
+        restTemplate.exchange(uri, HttpMethod.DELETE, null, Object.class);
+    }
+
     private MultiValueMap<String, String> attachRequestHeaders() {
         final LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         try
