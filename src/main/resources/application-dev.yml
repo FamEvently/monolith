@@ -1,0 +1,12 @@
+LOCALHOST: localhost
+services:
+  user-sessions:
+    base-url: http://${LOCALHOST}:9009
+
+
+DB_PASSWORD: root
+DB_USERNAME: root
+DB_HOST_FAMEVENTLY: ${LOCALHOST}
+
+server:
+  port: 6969

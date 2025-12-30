@@ -1,25 +1,19 @@
 package com.famevently.monolith.registration;
 
-import com.famevently.monolith.customer.CustomerCreationRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.famevently.monolith.login.GeneralLoginResponse;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
 public class RegistrationController {
     private final RegistrationService registrationService;
 
-    public RegistrationController(RegistrationService registrationService) {
+    public RegistrationController(final RegistrationService registrationService) {
         this.registrationService = registrationService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegistrationRequest request){
-        CustomerCreationRequest customer = registrationService.register(request);
-
-        return ResponseEntity.ok(customer);
+    @PostMapping("/v1/private/registration")
+    public GeneralLoginResponse registerUser(@RequestBody final RegistrationRequest request,
+                                             @RequestParam final String deviceUuid){
+        return registrationService.registerUser(request, deviceUuid);
     }
 }
