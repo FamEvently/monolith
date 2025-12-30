@@ -31,6 +31,15 @@ server:
       enabled: true
   shutdown: graceful
 
+services:
+  user-sessions:
+    base-url: http://api-gateway-service${suffix}
+    create-session: ${services.user-sessions.base-url}/sessions/users/{userId}
+    delete-session-by-device-uuid: ${services.user-sessions.base-url}/sessions/devices/{deviceUuid}
+    validate-session: ${services.user-sessions.base-url}/sessions/{sessionId}
+    read-timeout-in-millis: 3000
+    connection-timeout-in-millis: 1000
+
 google:
   oauth2:
     client-id: 463363879926-8gdlvjqa7a9t13ct8olq646766l7959p.apps.googleusercontent.com
