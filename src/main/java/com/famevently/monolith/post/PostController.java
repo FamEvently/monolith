@@ -13,9 +13,19 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping
-    public Post createPost(@RequestBody final CreatePostRequest request) {
-        return postService.createPost(request);
+    @PostMapping("/users/{userId}/event")
+    public Post createEventPost(@PathVariable final Long userId, @RequestBody final CreatePostRequest request) {
+        return postService.createEventPost(request, userId);
+    }
+
+    @PostMapping("/users/{userId}/blog")
+    public Post createBlogPost(@PathVariable final Long userId, @RequestBody final CreateBlogPostRequest request) {
+        return postService.createBlogPost(request, userId);
+    }
+
+    @PostMapping("/users/{userId}/reply")
+    public Post createPost(@PathVariable final Long userId, @RequestBody final CreateRepostRequest request) {
+        return postService.createRepost(request, userId);
     }
 
     @GetMapping("/{postId}")
@@ -24,7 +34,27 @@ public class PostController {
     }
 
     @GetMapping("/users/{userId}")
-    public List<Post> getPostsForUser(@PathVariable final long userId) {
-        return postService.getPostsForUser(userId);
+    public List<Post> getPostsByUser(@PathVariable final long userId) {
+        return postService.getPostsByUser(userId);
+    }
+
+    @GetMapping("/events/{eventId}")
+    public List<Post> getEventPosts(@PathVariable final long eventId) {
+        return postService.getEventPosts(eventId);
+    }
+
+    @GetMapping("/blog")
+    public List<Post> getBlogPosts() {
+        return postService.getBlogPosts();
+    }
+
+    @GetMapping("/{postId}/replies")
+    public List<Post> getReplies(@PathVariable final String postId) {
+        return postService.getReplies(postId);
+    }
+
+    @DeleteMapping("/{postId}")
+    public void deletePost(@PathVariable final String postId) {
+        postService.deletePost(postId);
     }
 }
