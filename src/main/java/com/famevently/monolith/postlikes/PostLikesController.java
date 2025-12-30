@@ -17,7 +17,6 @@ public class PostLikesController {
     }
 
     @PostMapping("/{postId}/likes/users/{userId}")
-    @ResponseStatus(HttpStatus.OK)
     public void likePost(@PathVariable final String postId,
                          @PathVariable final long userId,
                          @RequestBody final LikePostRequest request) {
@@ -25,7 +24,6 @@ public class PostLikesController {
     }
 
     @DeleteMapping("/{postId}/likes/users/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void unlikePost(@PathVariable final String postId,
                            @PathVariable final long userId) {
         postLikesService.unlikePost(postId, userId);
