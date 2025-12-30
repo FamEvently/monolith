@@ -81,6 +81,37 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
             return Optional.empty();
         }
     }
+    public final Optional<Event> getEventByForOrganizer(final long eventId, final long userId)
+    {
+        final String sql = """
+        SELECT 
+            e.event_id, 
+            e.user_id, 
+            e.overview, 
+            ec.category_name AS event_category, 
+            e.date, 
+            e.address, 
+            e.location,
+            e.additional_info, 
+            e.min_age, 
+            e.max_age, 
+            e.adults_only, 
+            e.created_at 
+        FROM event e
+        JOIN n_event_categories ec ON e.event_category_id = ec.event_category_id
+        WHERE e.event_id = :event_id
+        AND e.user_id = :user_id
+    """;
+        final Map<String, Object> params = Map.of("event_id", eventId,
+                "user_id", userId);
+
+        try
+        {
+            return Optional.of(Objects.requireNonNull(getNamedParameterJdbcTemplate().queryForObject(sql, params, ROW_MAPPER)));
+        } catch (final EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
 
     final List<Event> getEventsByCategory(final String categoryName)
     {
@@ -174,22 +205,4 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
 
         getNamedParameterJdbcTemplate().update(sql, params);
     }
-
-
-
-    // BIGINT event_id PK
-    //            BIGINT user_id FK
-    //            TEXT event_overview
-    //            BIGINT event_category_id FK
-    //            TIMESTAMPTZ event_date
-    //            VARCHAR_500 event_address
-    //            TEXT event_additional_info
-    //            INTEGER min_age "NULL, CHECK(min_age >= 0 AND min_age <= 120)"
-    //            INTEGER max_age "NULL, CHECK(max_age >= 0 AND max_age <= 120)"
-    //            BOOLEAN is_for_adults_only "NOT NULL, DEFAULT FALSE"
-    //            TIMESTAMPTZ created_at
-    //            CONSTRAINT check_age_range "CHECK(max_age IS NULL OR min_age IS NULL OR max_age >= min_age)"
-    //            CONSTRAINT unique_event_organizer "UNIQUE(event_id, user_id) - For composite FK"
-
-
 }
