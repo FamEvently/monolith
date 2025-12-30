@@ -1,7 +1,6 @@
 package com.famevently.monolith.usersession;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -56,17 +55,14 @@ public class UserSessionRestClient {
         return restTemplate.postForObject(uri, requestEntity, UserSession.class);
     }
 
-    public Optional<UserSession> validateSession(final String sessionId) {
+    public Optional<UserSession> validateSession(final String sessionId, final String deviceUuid) {
         final String uri = UriComponentsBuilder.fromHttpUrl(validateSessionEndpoint)
+                .queryParam("deviceUuid", deviceUuid)
                 .buildAndExpand(sessionId)
                 .toUriString();
 
-        final MultiValueMap<String, String> headers = attachRequestHeaders();
-
-        final HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
         try {
-            return Optional.ofNullable(restTemplate.exchange(uri, HttpMethod.GET, requestEntity, UserSession.class).getBody());
+            return Optional.ofNullable(restTemplate.exchange(uri, HttpMethod.GET, null, UserSession.class).getBody());
         } catch (final Exception e)
         {
             return Optional.empty();
