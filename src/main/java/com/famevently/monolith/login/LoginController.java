@@ -1,27 +1,32 @@
 package com.famevently.monolith.login;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/v1/private/login")
 public class LoginController {
-    private final LoginService service;
+    private final LoginService loginService;
 
-    public LoginController(LoginService service) {
-        this.service = service;
+    public LoginController(final LoginService service) {
+        this.loginService = service;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(service.login(request));
+    @PostMapping()
+    public GeneralLoginResponse loginWithCredentials(@RequestBody final LoginRequest request,
+                                                     @RequestParam final String deviceUuid) {
+        return loginService.loginWithCredentials(request, deviceUuid);
+    }
+
+    @PostMapping("/session/{sessionId}")
+    public GeneralLoginResponse loginWithSession(@PathVariable final String sessionId,
+                                                 @RequestParam final String deviceUuid) {
+        return loginService.loginWithSession(sessionId, deviceUuid);
     }
 
     @PostMapping("/google")
-    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest request) {
-        return ResponseEntity.ok(service.googleLogin(request));
+    public GeneralLoginResponse googleLogin(@RequestBody final GoogleLoginRequest request,
+                                         @RequestParam final String deviceUuid) {
+        return loginService.googleLogin(request,deviceUuid);
     }
 }
