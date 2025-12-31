@@ -24,8 +24,7 @@ public class PostLikesService {
 
     @Transactional
     public void likePost(final LikePostRequest request, final long userId, final String postId) {
-        postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found: " + postId));
+        postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 
         final Optional<PostLike> previousLike = postLikesRepository.findByPostIdAndUserId(postId, userId);
 

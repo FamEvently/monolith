@@ -34,7 +34,7 @@ public class RegistrationService {
     public GeneralLoginResponse registerUser(final RegistrationRequest request, final String deviceUuid){
 
         if (customerService.getCustomerByEmail(request.email()).isPresent()){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already used");
+            throw new EmailAlreadyUsedException();
         }
 
         final CustomerCreationRequest customer = CustomerCreationRequest.fromRegistration(request);
@@ -45,6 +45,8 @@ public class RegistrationService {
                 user.userId(),
                 deviceUuid,
                 user.email(),
+                user.firstName(),
+                user.lastName(),
                 user.language(),
                 user.createdAt(),
                 true,

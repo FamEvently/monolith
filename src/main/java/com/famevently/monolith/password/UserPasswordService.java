@@ -2,8 +2,6 @@ package com.famevently.monolith.password;
 
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class UserPasswordService {
 
@@ -19,18 +17,13 @@ public class UserPasswordService {
     }
 
     public AuthenticatedPassword validatePassword(final String email, final String requestedPassword) {
-        final Optional<UserPassword> userPassword = passwordRepository.getByEmail(email);
+        final UserPassword userPassword = passwordRepository.getByEmail(email).orElseThrow(() -> new InvalidCredentials(email));
 
-        if (userPassword.isEmpty()) {
-            throw new IllegalArgumentException("No password found for email: " + email);
+        if (!PasswordValidationService.validatePassword(requestedPassword, userPassword.passwordHash())) {
+            throw new InvalidCredentials(email);
         }
 
-        if (!PasswordValidationService.validatePassword(requestedPassword, userPassword.get().passwordHash())) {
-            //throw new Invalid password exception
-        }
-
-        return AuthenticatedPassword.of(userPassword.get().userId());
-
+        return AuthenticatedPassword.of(userPassword.userId());
     }
 
 }
