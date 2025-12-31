@@ -23,7 +23,7 @@ public class PostController {
         return postService.createBlogPost(request, userId);
     }
 
-    @PostMapping("/users/{userId}/reply")
+    @PostMapping("/users/{userId}/repost")
     public Post createPost(@PathVariable final Long userId, @RequestBody final CreateRepostRequest request) {
         return postService.createRepost(request, userId);
     }
@@ -48,7 +48,7 @@ public class PostController {
         return postService.getBlogPosts();
     }
 
-    @GetMapping("/{postId}/replies")
+    @GetMapping("/{postId}/reposts")
     public List<Post> getReplies(@PathVariable final String postId) {
         return postService.getReplies(postId);
     }

@@ -27,7 +27,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
         this.eventCategoriesRepository = eventCategoriesRepository;
     }
 
-    public Optional<Event> save(final CreateEventRequest event) {
+    public Optional<Event> save(final CreateEventRequest event, final Long userId) {
         final String sql = """
                 INSERT INTO event (
                 user_id, overview, event_category_id, date, address, location, additional_info, min_age, max_age, adults_only, created_at
@@ -35,7 +35,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
                 """;
 
         var params = new MapSqlParameterSource()
-                .addValue("user_id", event.userId())
+                .addValue("user_id", userId)
                 .addValue("overview", event.overview())
                 .addValue("event_category_id", eventCategoriesRepository.getByName(event.category()))
                 .addValue("date", event.eventDate())

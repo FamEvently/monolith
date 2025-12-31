@@ -14,10 +14,10 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @PostMapping()
-    public Event createEvent(@RequestBody final CreateEventRequest request)
+    @PostMapping("/users/{userId}")
+    public Event createEvent(@PathVariable final Long userId, @RequestBody final CreateEventRequest request)
     {
-        return eventService.createEvent(request);
+        return eventService.createEvent(request, userId);
     }
 
     @GetMapping("/users/{userId}")

@@ -12,15 +12,15 @@ public class EventService {
     private final UserAttendanceRepository userAttendanceRepository;
     private final EventAttendanceStatsRepository eventAttendanceStatsRepository;
 
-    public EventService(EventRepository eventRepository, UserAttendanceRepository userAttendanceRepository, EventAttendanceStatsRepository eventAttendanceStatsRepository) {
+    public EventService(final EventRepository eventRepository, final UserAttendanceRepository userAttendanceRepository, final EventAttendanceStatsRepository eventAttendanceStatsRepository) {
         this.eventRepository = eventRepository;
         this.userAttendanceRepository = userAttendanceRepository;
         this.eventAttendanceStatsRepository = eventAttendanceStatsRepository;
     }
 
-    final Event createEvent(final CreateEventRequest request)
+    final Event createEvent(final CreateEventRequest request, final Long userId)
     {
-        final Optional<Event> savedEvent =  eventRepository.save(request);
+        final Optional<Event> savedEvent =  eventRepository.save(request, userId);
         if (savedEvent.isEmpty()) {
             throw new IllegalStateException("Event not saved");
         }
