@@ -20,7 +20,7 @@ public class PostLikesController {
     public void likePost(@PathVariable final String postId,
                          @PathVariable final long userId,
                          @RequestBody final LikePostRequest request) {
-        postLikesService.likePost(new LikePostRequest(postId, request.reactionType()), userId);
+        postLikesService.likePost(request, userId, postId);
     }
 
     @DeleteMapping("/{postId}/likes/users/{userId}")

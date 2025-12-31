@@ -22,25 +22,6 @@ public class EventAttendanceStatsRepository extends NamedParameterJdbcDaoSupport
         setDataSource(dataSource);
     }
 
-    public void upsertAttendanceStats(final long eventId, final int attendeesCount, final int goingCount) {
-        final String sql = """
-                INSERT INTO event_attendance_stats (event_id, attendees_count, going_count)
-                VALUES (:event_id, :attendees_count, :going_count)
-                ON DUPLICATE KEY UPDATE
-                    attendees_count = :attendees_count,
-                    going_count = :going_count,
-                    updated_at = :updated_at
-                """;
-
-        var params = new MapSqlParameterSource()
-                .addValue("event_id", eventId)
-                .addValue("attendees_count", attendeesCount)
-                .addValue("going_count", goingCount)
-                .addValue("updated_at", OffsetDateTime.now());
-
-        getNamedParameterJdbcTemplate().update(sql, params);
-    }
-
     public void deleteAttendanceStats(final long eventId) {
         final String sql = """
                         DELETE FROM event_attendance_stats 
@@ -67,11 +48,6 @@ public class EventAttendanceStatsRepository extends NamedParameterJdbcDaoSupport
         }
     }
 
-    /**
-     * Atomically increments/decrements attendance counts.
-     * Creates the record if it doesn't exist (starting from 0).
-     * Race-condition safe due to atomic SQL operation.
-     */
     public void adjustAttendanceCounts(final long eventId,
                                        final AttendanceChange attendeesChange,
                                        final AttendanceChange goingChange) {

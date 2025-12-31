@@ -23,23 +23,23 @@ public class PostLikesService {
     }
 
     @Transactional
-    public void likePost(final LikePostRequest request, final long userId) {
-        postRepository.findById(request.postId())
-                .orElseThrow(() -> new IllegalArgumentException("Post not found: " + request.postId()));
+    public void likePost(final LikePostRequest request, final long userId, final String postId) {
+        postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found: " + postId));
 
-        final Optional<PostLike> previousLike = postLikesRepository.findByPostIdAndUserId(request.postId(), userId);
+        final Optional<PostLike> previousLike = postLikesRepository.findByPostIdAndUserId(postId, userId);
 
-        postLikesRepository.upsert(request.postId(), userId, request.reactionType());
+        postLikesRepository.upsert(postId, userId, request.reactionType());
 
         if (previousLike.isEmpty()) {
             postLikesStatsRepository.adjustReactionCount(
-                    request.postId(),
+                    postId,
                     request.reactionType(),
                     LikeChange.INCREMENT);
         } else {
             final ReactionType oldReaction = previousLike.get().reactionName();
             if (oldReaction != request.reactionType()) {
-                postLikesStatsRepository.switchReaction(request.postId(), oldReaction, request.reactionType());
+                postLikesStatsRepository.switchReaction(postId, oldReaction, request.reactionType());
             }
         }
     }
