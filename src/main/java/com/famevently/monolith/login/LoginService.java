@@ -1,5 +1,6 @@
 package com.famevently.monolith.login;
 
+import com.famevently.monolith.customer.CustomerNotFoundException;
 import com.famevently.monolith.customer.CustomerService;
 import com.famevently.monolith.customer.UserCoreInfo;
 import com.famevently.monolith.password.AuthenticatedPassword;
@@ -31,13 +32,7 @@ public class LoginService {
     public GeneralLoginResponse loginWithCredentials(final LoginRequest request, final String deviceUuid) {
         final AuthenticatedPassword userPassword = userPasswordService.validatePassword(request.email(), request.password());
 
-        final Optional<UserCoreInfo> userInfoOpt = customerService.getCustomer(userPassword.userId());
-
-        if (userInfoOpt.isEmpty()) {
-            throw new IllegalStateException("User not found");
-        }
-
-        final UserCoreInfo userInfo = userInfoOpt.get();
+        final UserCoreInfo userInfo = customerService.getCustomer(userPassword.userId()).orElseThrow(CustomerNotFoundException::new);
 
         final CreateAuthenticatedUserRequest authenticatedUserRequest = CreateAuthenticatedUserRequest.withoutSession(userInfo.userId(),
                 deviceUuid,
@@ -59,19 +54,9 @@ public class LoginService {
             throw new IllegalArgumentException("Session ID cannot be null");
         }
 
-        final Optional<UserSession> session = userSessionRestClient.validateSession(sessionId, deviceUuid);
+        final UserSession session = userSessionRestClient.validateSession(sessionId, deviceUuid);
 
-        if (session.isEmpty()) {
-            throw new IllegalStateException("Session not found");
-        }
-
-        final Optional<UserCoreInfo> userInfoOpt = customerService.getCustomer(session.get().userId());
-
-        if (userInfoOpt.isEmpty()) {
-            throw new IllegalStateException("User not found");
-        }
-
-        final UserCoreInfo userInfo = userInfoOpt.get();
+        final UserCoreInfo userInfo = customerService.getCustomer(session.userId()).orElseThrow(CustomerNotFoundException::new);
 
         final CreateAuthenticatedUserRequest authenticatedUserRequest = new CreateAuthenticatedUserRequest(userInfo.userId(),
                 deviceUuid,
@@ -89,13 +74,7 @@ public class LoginService {
 
     public GeneralLoginResponse googleLogin(final GoogleLoginRequest request, String deviceUuid) {
         final String email = googleTokenVerifier.verifyAndGetEmail(request.token());
-        final Optional<UserCoreInfo> userInfoOpt = customerService.getCustomerByEmail(email);
-
-        if (userInfoOpt.isEmpty()) {
-            throw new IllegalStateException("User not found");
-        }
-
-        final UserCoreInfo userInfo = userInfoOpt.get();
+        final UserCoreInfo userInfo = customerService.getCustomerByEmail(email).orElseThrow(CustomerNotFoundException::new);
 
         final CreateAuthenticatedUserRequest authenticatedUserRequest = CreateAuthenticatedUserRequest.withoutSession(userInfo.userId(),
                 deviceUuid,

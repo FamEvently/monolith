@@ -56,17 +56,17 @@ public class UserSessionRestClient {
         return restTemplate.postForObject(uri, requestEntity, UserSession.class);
     }
 
-    public Optional<UserSession> validateSession(final String sessionId, final String deviceUuid) {
+    public UserSession validateSession(final String sessionId, final String deviceUuid) {
         final String uri = UriComponentsBuilder.fromHttpUrl(validateSessionEndpoint)
                 .queryParam("deviceUuid", deviceUuid)
                 .buildAndExpand(sessionId)
                 .toUriString();
 
         try {
-            return Optional.ofNullable(restTemplate.exchange(uri, HttpMethod.GET, null, UserSession.class).getBody());
+            return restTemplate.exchange(uri, HttpMethod.GET, null, UserSession.class).getBody();
         } catch (final Exception e)
         {
-            return Optional.empty();
+            throw new InvalidSessionException(e.getMessage());
         }
     }
 
