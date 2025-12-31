@@ -1,0 +1,2 @@
+ALTER TABLE message MODIFY COLUMN event_id BIGINT NULL;
+

@@ -7,5 +7,4 @@ public record CreateMessageRequest(
     String description,
     int imageCount
 ) {
-
 }
