@@ -84,13 +84,10 @@ public class PostService {
 
     @Transactional
     public void deletePost(final String postId) {
-        // Get the post to find its messageId
         final Post post = getPostById(postId);
 
-        // Delete post first (due to FK constraints)
         postRepository.deleteByMessageId(post.messageId());
 
-        // Delete the message (content)
         messageService.deleteMessageById(post.messageId());
     }
 }
