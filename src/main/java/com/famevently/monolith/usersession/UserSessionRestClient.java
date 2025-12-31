@@ -43,8 +43,9 @@ public class UserSessionRestClient {
                 .build();
     }
 
-    public UserSession createSession(final long userId, final boolean isAdmin) {
+    public UserSession createSession(final long userId, final boolean isAdmin, final String deviceUuid) {
         final String uri = UriComponentsBuilder.fromHttpUrl(createSessionEndpoint)
+                .queryParam("deviceUuid", deviceUuid)
                 .buildAndExpand(userId)
                 .toUriString();
         final CreateSessionRequest createSessionRequest = new CreateSessionRequest(isAdmin);

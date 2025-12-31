@@ -129,7 +129,7 @@ public class LoginService {
 
     private String getSessionId(final CreateAuthenticatedUserRequest request) {
         if (isNull(request.sessionId())) {
-            final UserSession session = userSessionRestClient.createSession(request.userId(), false);
+            final UserSession session = userSessionRestClient.createSession(request.userId(), false, request.deviceUuid());
             return session.sessionId();
         }
         return request.sessionId();
