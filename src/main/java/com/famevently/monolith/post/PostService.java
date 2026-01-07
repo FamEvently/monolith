@@ -3,6 +3,7 @@ package com.famevently.monolith.post;
 import com.famevently.monolith.event.EventRepository;
 import com.famevently.monolith.message.CreateMessageRequest;
 import com.famevently.monolith.message.MessageService;
+import com.famevently.monolith.postlikes.PostNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +64,7 @@ public class PostService {
 
     public Post getPostById(final String postId) {
         return postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalStateException("Post not found"));
+                .orElseThrow(() -> new PostNotFoundException("Post not found"));
     }
 
     public List<Post> getPostsByUser(final long userId) {
