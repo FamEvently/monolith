@@ -1,6 +1,8 @@
 package com.famevently.monolith.exception;
 
+import com.famevently.monolith.attendance.CannotAttendOwnEventException;
 import com.famevently.monolith.customer.CustomerNotFoundException;
+import com.famevently.monolith.event.EventNotFoundException;
 import com.famevently.monolith.login.InvalidGoogleCredentials;
 import com.famevently.monolith.password.InvalidCredentials;
 import com.famevently.monolith.postlikes.PostNotFoundException;
@@ -87,6 +89,20 @@ public class GlobalExceptionHandler {
     {
         logger.warn("Invalid session");
         return respond(HttpStatus.UNAUTHORIZED, ResponseExceptionFactory.businessException(e.getMessage()));
+    }
+
+    @ExceptionHandler({CannotAttendOwnEventException.class})
+    public ResponseEntity<GlobalExceptionResponse> handleCannotAttendOwnEvent(final CannotAttendOwnEventException e)
+    {
+        logger.info("User attempted to attend own event");
+        return respond(HttpStatus.BAD_REQUEST, ResponseExceptionFactory.businessException(e.getMessage()));
+    }
+
+    @ExceptionHandler({EventNotFoundException.class})
+    public ResponseEntity<GlobalExceptionResponse> handleEventNotFound(final EventNotFoundException e)
+    {
+        logger.info("Event not found: {}", e.getEventId());
+        return respond(HttpStatus.NOT_FOUND, ResponseExceptionFactory.businessException(e.getMessage()));
     }
 
     private ResponseEntity<GlobalExceptionResponse> respond(final HttpStatus status,

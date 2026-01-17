@@ -14,10 +14,10 @@ public class EventCategoriesRepository extends NamedParameterJdbcDaoSupport {
         setDataSource(dataSource);
     }
 
-    public Long getByName(final String name)
+    public Long getByName(final EventCategory eventCategory)
     {
         final String sql = "SELECT event_category_id FROM n_event_categories WHERE category_name = :name";
-        final var params = Map.of("name", name);
+        final var params = Map.of("name", eventCategory.name());
 
         return getNamedParameterJdbcTemplate().queryForObject(sql, params, Long.class);
     }

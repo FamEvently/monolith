@@ -1,9 +1,11 @@
 package com.famevently.monolith.event;
 
+import com.famevently.monolith.attendance.EventAttendanceStats;
 import com.famevently.monolith.attendance.UserAttendance;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/events")
@@ -27,7 +29,7 @@ public class EventController {
     }
 
     @GetMapping("/by-category")
-    public List<Event> getEventsByCategory(@RequestParam final String categoryName)
+    public List<Event> getEventsByCategory(@RequestParam final EventCategory categoryName)
     {
         return eventService.getEventsByCategory(categoryName);
     }
@@ -58,20 +60,20 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}/stats")
-    public void getEventAttendance(@PathVariable final Long eventId)
+    public Optional<EventAttendanceStats> getEventAttendance(@PathVariable final Long eventId)
     {
-        eventService.getEventAttendanceStats(eventId);
+       return eventService.getEventAttendanceStats(eventId);
     }
 
     @GetMapping("/{eventId}/users/{userId}/attendance")
-    public void getAttendanceForEvent(@PathVariable final Long eventId, @PathVariable final Long userId)
+    public Optional<UserAttendance> getAttendanceForEvent(@PathVariable final Long eventId, @PathVariable final Long userId)
     {
-        eventService.getUserAttendanceForEvent(userId, eventId);
+        return eventService.getUserAttendanceForEvent(userId, eventId);
     }
 
     @GetMapping("/users/{userId}/attendance")
-    public void getUserAttendance(@PathVariable final Long userId)
+    public List<UserAttendance> getUserAttendance(@PathVariable final Long userId)
     {
-        eventService.getUserAttendance(userId);
+        return eventService.getUserAttendance(userId);
     }
 }

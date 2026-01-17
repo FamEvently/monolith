@@ -7,7 +7,7 @@ public record Event(
         Long eventId,
         Long userId,
         String overview,
-        String eventCategory,
+        EventCategory eventCategory,
         LocalDate date,
         String address,
         String location,

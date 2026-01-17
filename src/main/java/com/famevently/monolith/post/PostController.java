@@ -49,7 +49,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/reposts")
-    public List<Post> getReplies(@PathVariable final String postId) {
+    public List<Post> getReposts(@PathVariable final String postId) {
         return postService.getReplies(postId);
     }
 
