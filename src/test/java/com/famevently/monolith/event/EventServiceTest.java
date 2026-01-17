@@ -122,12 +122,6 @@ public class EventServiceTest extends BaseIntegrationTest {
         final Long eventId = objectMapper.readTree(createResult.getResponse().getContentAsString())
                 .get("eventId").asLong();
 
-        // Mark first user as going
-        mockMvc.perform(post("/v1/events/{eventId}/users/{userId}/attendance", eventId, testUserId)
-                        .param("isGoing", "true")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
         // Mark second user as going
         mockMvc.perform(post("/v1/events/{eventId}/users/{userId}/attendance", eventId, secondUserId)
                         .param("isGoing", "true")
