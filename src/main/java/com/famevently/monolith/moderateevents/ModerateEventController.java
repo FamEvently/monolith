@@ -1,4 +1,4 @@
-package com.famevently.monolith.moderate_events;
+package com.famevently.monolith.moderateevents;
 
 import java.util.List;
 

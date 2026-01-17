@@ -1,11 +1,11 @@
-package com.famevently.monolith.moderate_events;
+package com.famevently.monolith.moderateevents;
 
 import java.time.OffsetDateTime;
 
 public record ModerateEvent(
     long moderationId,
-    long statusId,
-    long reasonId, 
+    ModerationStatus status,
+    ModerationReason reason, 
     long eventId,
     OffsetDateTime createdAt,
     OffsetDateTime updatedAt

@@ -1,4 +1,4 @@
-package com.famevently.monolith.moderate_events;
+package com.famevently.monolith.moderateevents;
 
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
@@ -84,8 +84,8 @@ public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
         final String sql = """
             SELECT moderation_id,
                 me.event_id,
-                me.moderation_status_id,
-                me.moderation_reason_id,
+                me.moderation_status_id as status,
+                me.moderation_reason_id as reason,
                 me.created_at,
                 me.updated_at
             FROM moderate_event me
