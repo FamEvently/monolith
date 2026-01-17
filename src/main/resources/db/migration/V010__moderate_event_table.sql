@@ -58,5 +58,5 @@ CREATE TABLE IF NOT EXISTS moderate_event (
         REFERENCES n_moderate_event_reason (moderate_event_reason_id)
 );
 
--- Indexes for faster lookups
-CREATE INDEX idx_moderate_event_event_id ON moderate_event (even_
+CREATE INDEX idx_moderate_event_event_id ON moderate_event (event_id); 
+CREATE INDEX idx_moderate_event_status_id ON moderate_event (moderation_status_id);
