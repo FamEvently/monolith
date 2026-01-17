@@ -9,7 +9,7 @@ public class LogoutController
 {
     private final LogoutService logoutService;
 
-    public LogoutController(LogoutService logoutService) {
+    public LogoutController(final LogoutService logoutService) {
         this.logoutService = logoutService;
     }
 

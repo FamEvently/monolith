@@ -52,7 +52,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
         return getEventById(keyHolder.getKey().longValue());
     }
 
-    final Optional<Event> getEventById(final long eventId)
+    public Optional<Event> getEventById(final long eventId)
     {
         final String sql = """
         SELECT 
@@ -113,7 +113,7 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
         }
     }
 
-    final List<Event> getEventsByCategory(final String categoryName)
+    final List<Event> getEventsByCategory(final EventCategory categoryName)
     {
         final String sql = """
         SELECT 
@@ -131,9 +131,9 @@ public class EventRepository extends NamedParameterJdbcDaoSupport {
             e.created_at 
         FROM event e
         JOIN n_event_categories ec ON e.event_category_id = ec.event_category_id
-        WHERE ec.name = :category_name
+        WHERE ec.category_name = :category_name
         """;
-        final Map<String, Object> params = Map.of("category_name", categoryName);
+        final Map<String, Object> params = Map.of("category_name", categoryName.name());
 
         return getNamedParameterJdbcTemplate().query(sql, params, ROW_MAPPER);
     }
