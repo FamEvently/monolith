@@ -15,12 +15,10 @@ public class ModerateEventController {
     }
 
     @PostMapping("/{eventId}")
-    public void moderateEvent(
-        @PathVariable long eventId,
-        @RequestParam long statusId,
-        @RequestParam long reasonId
-    ) {
-        moderateEventService.moderateEvent(eventId, statusId, reasonId);
+    public void moderateEvent(@PathVariable long eventId, 
+                            @RequestParam ModerationStatus status,
+                            @RequestParam ModerationReason reason) {
+        moderateEventService.moderateEvent(eventId, status, reason);
     }
 
     @GetMapping("/{eventId}")

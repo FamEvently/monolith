@@ -17,11 +17,11 @@ public class ModerateEventService {
         return moderateEventRepository.getEventModerations(eventId);
     }
 
-    public void moderateEvent(long eventId, long statusId, long reasonId) {
+    public void moderateEvent(long eventId, ModerationStatus status, ModerationReason reason) {
         moderateEventRepository.insert(
             eventId,
-            statusId,
-            reasonId,
+            status,
+            reason,
             OffsetDateTime.now(),
             OffsetDateTime.now()
         );

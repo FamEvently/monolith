@@ -14,10 +14,18 @@ import java.util.Map;
 public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
 
     private static final DataClassRowMapper<ModerateEvent> ROW_MAPPER = new DataClassRowMapper<>(ModerateEvent.class);
-
-    public ModerateEventRepository(final DataSource dataSource) {
-        setDataSource(dataSource);
-    }
+        private final ModerationReasonRespository moderationReasonRepository;
+        private final ModerationStatusRepository moderationStatusRepository;
+    
+        public ModerateEventRepository(
+            DataSource dataSource, 
+            ModerationReasonRespository moderationReasonRepository,
+            ModerationStatusRepository moderationStatusRepository
+        ) {
+            setDataSource(dataSource);
+            this.moderationReasonRepository = moderationReasonRepository;
+            this.moderationStatusRepository = moderationStatusRepository;
+        }
 
       public List<ModerateEvent> getEventModerations(Long eventId) {
         final String sql = """
@@ -40,8 +48,8 @@ public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
 
     public void insert(
         long eventId,
-        long statusId,
-        long reasonId,
+        ModerationStatus status,
+        ModerationReason reason,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt
     ) {
@@ -63,8 +71,8 @@ public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
 
         final Map<String, Object> params = Map.of(
             "event_id", eventId,
-            "moderation_status_id", statusId,
-            "moderation_reason_id", reasonId,
+            "moderation_status_id", moderationStatusRepository.findByName(status),
+            "moderation_reason_id", moderationReasonRepository.findByName(reason),
             "created_at", createdAt,
             "updated_at", updatedAt
         );
