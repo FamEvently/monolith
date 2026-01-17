@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 
 public record Post(
         String postId,
+        String messageId,
         long userId,
         Long eventId,
         String postType,
