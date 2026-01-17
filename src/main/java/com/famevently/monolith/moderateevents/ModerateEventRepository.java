@@ -30,13 +30,17 @@ public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
       public List<ModerateEvent> getEventModerations(Long eventId) {
         final String sql = """
             SELECT
-                moderation_id,
-                event_id,
-                moderation_status_id,
-                moderation_reason_id,
-                created_at,
-                updated_at
-            FROM moderate_event
+                me.moderation_id,
+                me.event_id,
+                s.reason_name as status,
+                r.reason_name as reason,
+                me.created_at,
+                me.updated_at
+            FROM moderate_event me
+            JOIN n_moderate_event_status s
+            ON me.moderation_status_id = s.moderate_event_status_id
+            JOIN n_moderate_event_reason r
+            ON me.moderation_reason_id = r.moderate_event_reason_id
             WHERE event_id = :event_id
             ORDER BY created_at ASC
             """;
@@ -46,7 +50,7 @@ public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
         return getNamedParameterJdbcTemplate().query(sql, params, ROW_MAPPER);
     }
 
-    public void insert(
+    public void upsert(
         long eventId,
         ModerationStatus status,
         ModerationReason reason,
@@ -67,6 +71,10 @@ public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
                 :created_at,
                 :updated_at
             )
+            ON DUPLICATE KEY UPDATE
+            moderation_status_id = VALUES(moderation_status_id),
+            moderation_reason_id = VALUES(moderation_reason_id),
+            updated_at = VALUES(updated_at)
             """;
 
         final Map<String, Object> params = Map.of(
