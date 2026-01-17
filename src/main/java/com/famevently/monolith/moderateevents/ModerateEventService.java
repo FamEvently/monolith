@@ -18,7 +18,7 @@ public class ModerateEventService {
     }
 
     public void moderateEvent(long eventId, ModerationStatus status, ModerationReason reason) {
-        moderateEventRepository.insert(
+        moderateEventRepository.upsert(
             eventId,
             status,
             reason,
