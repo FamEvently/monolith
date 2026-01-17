@@ -31,6 +31,9 @@ server:
       enabled: true
   shutdown: graceful
 
+login-token:
+  time-to-live: P30D
+
 services:
   user-sessions:
     base-url: http://api-gateway-service${suffix}
