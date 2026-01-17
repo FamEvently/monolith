@@ -13,7 +13,8 @@ public class RegistrationController {
 
     @PostMapping("/v1/private/registration")
     public GeneralLoginResponse registerUser(@RequestBody final RegistrationRequest request,
-                                             @RequestParam final String deviceUuid){
+                                             @RequestParam final String deviceUuid)
+    {
         return registrationService.registerUser(request, deviceUuid);
     }
 }

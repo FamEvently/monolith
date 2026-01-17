@@ -14,7 +14,7 @@ public class PostRepository extends NamedParameterJdbcDaoSupport {
 
     private static final DataClassRowMapper<Post> ROW_MAPPER = new DataClassRowMapper<>(Post.class);
     private static final String SELECT_POST = """
-            SELECT p.post_id, p.message_id, m.user_id, m.event_id, pt.type_name AS post_type,
+            SELECT p.post_id, m.user_id, m.event_id, pt.type_name AS post_type,
                    m.description, m.image_count, p.is_organizer, p.parent_post_id,
                    m.created_at, m.updated_at
             FROM post p
