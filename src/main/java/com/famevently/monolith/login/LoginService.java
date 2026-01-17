@@ -3,13 +3,13 @@ package com.famevently.monolith.login;
 import com.famevently.monolith.customer.CustomerNotFoundException;
 import com.famevently.monolith.customer.CustomerService;
 import com.famevently.monolith.customer.UserCoreInfo;
+import com.famevently.monolith.logintoken.LoginToken;
+import com.famevently.monolith.logintoken.LoginTokenService;
 import com.famevently.monolith.password.AuthenticatedPassword;
 import com.famevently.monolith.password.UserPasswordService;
 import com.famevently.monolith.usersession.UserSession;
 import com.famevently.monolith.usersession.UserSessionRestClient;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 import static java.util.Objects.isNull;
 
@@ -19,14 +19,17 @@ public class LoginService {
     private final UserPasswordService userPasswordService;
     private final GoogleTokenVerifier googleTokenVerifier;
     private final UserSessionRestClient userSessionRestClient;
+    private final LoginTokenService loginTokenService;
 
     public LoginService(final CustomerService customerService,
                         final UserPasswordService userPasswordService,
-                        final GoogleTokenVerifier googleTokenVerifier, final UserSessionRestClient userSessionRestClient) {
+                        final GoogleTokenVerifier googleTokenVerifier, 
+                        final UserSessionRestClient userSessionRestClient, final LoginTokenService loginTokenService) {
         this.customerService = customerService;
         this.userPasswordService = userPasswordService;
         this.googleTokenVerifier = googleTokenVerifier;
         this.userSessionRestClient = userSessionRestClient;
+        this.loginTokenService = loginTokenService;
     }
 
     public GeneralLoginResponse loginWithCredentials(final LoginRequest request, final String deviceUuid) {
@@ -107,11 +110,32 @@ public class LoginService {
 
         if (request.rememberMe())
         {
-            //persist login token
-            //responseBuilder.loginToken(loginToken);
+            final LoginToken token = loginTokenService.createToken(request.userId());
+            responseBuilder.loginToken(token.loginToken());
         }
 
         return responseBuilder.build();
+    }
+
+    public GeneralLoginResponse loginWithToken(String loginToken, String deviceUuid) {
+        final LoginToken token = loginTokenService.getValidToken(loginToken);
+        final long userId = token.userId();
+        final UserCoreInfo userInfo = customerService.getCustomer(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        
+        userSessionRestClient.createSession(userId, false, deviceUuid);
+
+       final CreateAuthenticatedUserRequest authenticatedUserRequest = CreateAuthenticatedUserRequest.withoutSession(userInfo.userId(),
+                deviceUuid,
+                userInfo.email(),
+                userInfo.firstName(),
+                userInfo.lastName(),
+                userInfo.language(),
+                userInfo.createdAt(),
+                true,
+                AuthenticationMethod.LOGIN_TOKEN);
+
+     return createAuthenticatedUser(authenticatedUserRequest);
     }
 
     private String getSessionId(final CreateAuthenticatedUserRequest request) {
