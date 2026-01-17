@@ -2,6 +2,7 @@ package com.famevently.monolith.moderateevents;
 
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 
@@ -9,6 +10,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
 
     private static final DataClassRowMapper<ModerateEvent> ROW_MAPPER = new DataClassRowMapper<>(ModerateEvent.class);
