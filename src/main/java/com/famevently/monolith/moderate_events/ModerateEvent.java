@@ -4,8 +4,8 @@ import java.time.OffsetDateTime;
 
 public record ModerateEvent(
     long moderationId,
-    ModerationStatus status,
-    ModerationReason reason, 
+    long statusId,
+    long reasonId, 
     long eventId,
     OffsetDateTime createdAt,
     OffsetDateTime updatedAt

@@ -20,17 +20,11 @@ public class ModerateEventService {
     }
 
     @Transactional
-    public void moderateEvent(long eventId, ModerationStatus status, ModerationReason reason) {
-
-        if (status == null || reason == null) {
-            throw new IllegalArgumentException("Moderation status and reason cannot be null");
-        }
-
+    public void moderateEvent(long eventId, long statusId, long reasonId) {
         moderateEventRepository.insert(
-             0L,
             eventId,
-            status,
-            reason,
+            statusId,
+            reasonId,
             OffsetDateTime.now(),
             OffsetDateTime.now()
         );
