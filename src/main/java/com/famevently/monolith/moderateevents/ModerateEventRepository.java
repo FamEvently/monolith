@@ -32,7 +32,7 @@ public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
             SELECT
                 me.moderation_id,
                 me.event_id,
-                s.reason_name as status,
+                s.status_name as status,
                 r.reason_name as reason,
                 me.created_at,
                 me.updated_at
@@ -109,6 +109,8 @@ public class ModerateEventRepository extends NamedParameterJdbcDaoSupport {
             FROM moderate_event me
             JOIN n_moderate_event_status s
             ON me.moderation_status_id = s.moderate_event_status_id
+            JOIN n_moderate_event_reason r
+            ON me.moderation_reason_id = r.moderate_event_reason_id
             WHERE s.status_name = :status
             ORDER BY me.created_at ASC
         """;
