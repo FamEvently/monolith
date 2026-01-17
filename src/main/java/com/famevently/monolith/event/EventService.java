@@ -27,7 +27,7 @@ public class EventService {
         return savedEvent.get();
     }
 
-    final List<Event> getEventsByCategory(final String categoryName)
+    final List<Event> getEventsByCategory(final EventCategory categoryName)
     {
         return eventRepository.getEventsByCategory(categoryName);
     }
@@ -55,6 +55,13 @@ public class EventService {
 
     final void markUserAttendance(final UserAttendanceRequest request, final Long userId)
     {
+        final var event = eventRepository.getEventById(request.eventId())
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+        if (event.userId().equals(userId)) {
+            throw new CannotAttendOwnEventException();
+        }
+
         final var previousAttendance = userAttendanceRepository.getAttendance(userId, request.eventId());
         final boolean wasGoing = previousAttendance.map(UserAttendance::isGoing).orElse(false);
         final boolean hasResponded = previousAttendance.isPresent();

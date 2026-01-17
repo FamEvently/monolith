@@ -1,5 +1,6 @@
 package com.famevently.monolith.post;
 
+import com.famevently.monolith.event.EventNotFoundException;
 import com.famevently.monolith.event.EventRepository;
 import com.famevently.monolith.message.CreateMessageRequest;
 import com.famevently.monolith.message.MessageService;
@@ -26,10 +27,17 @@ public class PostService {
 
     @Transactional
     public Post createEventPost(final CreatePostRequest request, final long userId) {
+        validateEventExists(request.eventId());
         final boolean isOrganizer = eventRepository.getEventByForOrganizer(request.eventId(), userId).isPresent();
         final PostContext context = PostContext.eventPost(userId, request.eventId(), request.description(), request.imageCount(), isOrganizer);
 
         return createPost(context);
+    }
+
+    private void validateEventExists(final Long eventId) {
+        if (eventId != null && eventRepository.getEventById(eventId).isEmpty()) {
+            throw new EventNotFoundException(eventId);
+        }
     }
 
     @Transactional
@@ -41,10 +49,18 @@ public class PostService {
 
     @Transactional
     public Post createRepost(final CreateRepostRequest request, final long userId) {
+        validateEventExists(request.eventId());
+        validateParentPostExists(request.parentPostId());
         final boolean isOrganizer = eventRepository.getEventByForOrganizer(request.eventId(), userId).isPresent();
         final PostContext context = PostContext.repost(userId, request.eventId(), request.description(), isOrganizer, request.parentPostId());
 
         return createPost(context);
+    }
+
+    private void validateParentPostExists(final String parentPostId) {
+        if (parentPostId != null && postRepository.findById(parentPostId).isEmpty()) {
+            throw new PostNotFoundException(parentPostId);
+        }
     }
 
     private Post createPost(final PostContext context) {

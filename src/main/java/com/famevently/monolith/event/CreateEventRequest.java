@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public record CreateEventRequest(
         String overview,
-        String category,
+        EventCategory category,
         LocalDate eventDate,
         String address,
         String location,

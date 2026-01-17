@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       - MARIADB_ROOT_PASSWORD=root
-      - MARIADB_DATABASE=root
+      - MARIADB_DATABASE=famevently
       - MARIADB_USER=root
       - MARIADB_PASSWORD=root
 
