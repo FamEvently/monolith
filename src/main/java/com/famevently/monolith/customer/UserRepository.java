@@ -1,5 +1,7 @@
 package com.famevently.monolith.customer;
 
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -20,6 +22,7 @@ public class UserRepository extends NamedParameterJdbcDaoSupport
 {
     private static final DataClassRowMapper<UserCoreInfo> ROW_MAPPER = new DataClassRowMapper<>(
             UserCoreInfo.class);
+    public static final String USER_CORE_INFO = "userCoreInfo";
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public UserRepository(final DataSource datasource) {
@@ -27,6 +30,7 @@ public class UserRepository extends NamedParameterJdbcDaoSupport
        this.namedParameterJdbcTemplate = getNamedParameterJdbcTemplate();
     }
 
+    @CachePut(value = USER_CORE_INFO, key = "#userId")
     public Optional<UserCoreInfo> save(CustomerCreationRequest request) {
         String sql = "INSERT INTO users (email, first_name, last_name, language, gender, birthday, country, is_whitelisted, created_at)" +
                 " VALUES (:email, :first_name, :last_name, :language, gender, :birthday, :country, :is_whitelisted, :created_at)";
@@ -49,6 +53,7 @@ public class UserRepository extends NamedParameterJdbcDaoSupport
         return getUserById(userId);
     }
 
+    @Cacheable(value = USER_CORE_INFO, key = "#userId")
     public Optional<UserCoreInfo> getUserById(final long userId) {
         String sql = "SELECT * FROM users WHERE user_id = :user_id";
 
