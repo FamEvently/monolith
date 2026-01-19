@@ -1,6 +1,5 @@
 package com.famevently.monolith.login;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,5 +27,11 @@ public class LoginController {
     public GeneralLoginResponse googleLogin(@RequestBody final GoogleLoginRequest request,
                                          @RequestParam final String deviceUuid) {
         return loginService.googleLogin(request,deviceUuid);
+    }
+
+    @PostMapping("/token/{tokenId}")
+    public GeneralLoginResponse loginWithToken(@PathVariable final String loginToken, 
+                                        @RequestParam final String deviceUuid) {
+        return loginService.loginWithToken(loginToken, deviceUuid);
     }
 }
