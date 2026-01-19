@@ -1,0 +1,16 @@
+LOCALHOST: localhost
+
+
+DB_PASSWORD: root
+DB_USERNAME: root
+DB_HOST_FAMEVENTLY: ${LOCALHOST}
+
+REDIS_HOST: localhost
+REDIS_PORT: 6379
+
+server:
+  port: 6969
+
+services:
+  user-sessions:
+    base-url: http://localhost

@@ -1,0 +1,28 @@
+services:
+  database:
+    image: mariadb:latest
+    container_name: fmevently-mariadb
+    restart: unless-stopped
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=famevently
+      - MARIADB_USER=root
+      - MARIADB_PASSWORD=root
+
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis:7-alpine
+    container_name: famevently-redis-local
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mariadb_data:
+  redis_data:

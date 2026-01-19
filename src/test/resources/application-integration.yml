@@ -1,0 +1,10 @@
+db:
+  host: mariadb
+  username: root
+  password: root
+
+spring:
+  datasource:
+    url: jdbc:mariadb://${db.host}:3306/famevently
+    username: ${db.username}
+    password: ${db.password}
